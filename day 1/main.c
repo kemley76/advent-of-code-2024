@@ -5,39 +5,53 @@
 void heapify(int*, int);
 void swap(int*, int*);
 void heapifyDown(int*, int, int);
+int popHeap(int*, int);
 
 int main() {
     int capacity = 16;
     int size = 0;
 
-    int* leftList = malloc(capacity * sizeof(int));
-    int* rightList = malloc(capacity * sizeof(int));
+    int* lList = malloc(capacity * sizeof(int));
+    int* rList = malloc(capacity * sizeof(int));
 
     int left, right;
     while (scanf("%d %d", &left, &right) != EOF) {
-        leftList[size] = left;
-        rightList[size] = right;
+        lList[size] = left;
+        rList[size] = right;
         size++;
         if (size == capacity) {
             capacity *= 2;
-            leftList = realloc(leftList, capacity * sizeof(int));
-            rightList = realloc(rightList, capacity * sizeof(int));
+            lList = realloc(lList, capacity * sizeof(int));
+            rList = realloc(rList, capacity * sizeof(int));
         }
     }
-    heapify(leftList, size);
-    heapify(rightList, size);
+    heapify(lList, size);
+    heapify(rList, size);
 
-   int totalDifference = 0;
-    while (size > 0) {
-        totalDifference += abs(leftList[0] - rightList[0]);
-
-        swap(leftList, leftList + size - 1);
-        swap(rightList, rightList + size - 1);
-        size--;
-        heapifyDown(rightList, 0, size);
-        heapifyDown(leftList, 0, size);
+    int s = size;
+    int totalDifference = 0;
+    while (s > 0) {
+        left = popHeap(lList, s);
+        right = popHeap(rList, s);
+        s--;
+        totalDifference += abs(left - right);
     }
+
+    int* lPtr = lList; 
+    int* rPtr = rList;
+    int similarityScore = 0;
+    while (lPtr < lList + size && rPtr < rList + size) {
+        while (rPtr < rList + size && *lPtr <= *rPtr) {
+            if (*lPtr == *rPtr) {
+                similarityScore += *lPtr;
+            }
+            rPtr++;
+        }
+        lPtr++;
+    }
+
     printf("Total difference: %d\n", totalDifference);
+    printf("Similarity score: %d\n", similarityScore);
 
     return 0;
 }
@@ -75,6 +89,13 @@ void heapifyDown(int* arr, int i, int size) {
         swap(arr + smallIdx, arr + i);
         i = smallIdx;
     }
+}
+
+int popHeap(int* heap, int size) {
+    int smallest = heap[0];
+    swap(heap, heap + size - 1);
+    heapifyDown(heap, 0, size - 1);
+    return smallest;
 }
 
 void swap(int* a, int* b) {
