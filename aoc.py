@@ -14,7 +14,7 @@ if cmd == "make":
     os.popen("cp ../template.c ./main.c")
 elif cmd == "run":
     os.chdir(folder)
-    comp = "gcc ./main.c -lm -Wall -Wextra -Wconversion -o  main.exe" 
+    comp = "gcc ./main.c -lm -Wall -Wextra -o  main.exe" 
     if len(sys.argv) > 3:
         if sys.argv[3] == "input":
             os.system(f"{comp}; ./main.exe < input.txt")
